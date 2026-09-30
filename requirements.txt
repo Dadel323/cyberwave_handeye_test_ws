@@ -1,0 +1,13 @@
+# pip packages for ros_venv (created with --system-site-packages, so ROS and
+# apt Python packages stay visible). Pinned to the versions in use; OpenCV in
+# particular changes ChArUco detection between releases.
+opencv-python-headless==5.0.0.93
+numpy==2.3.5
+transforms3d==0.4.2
+matplotlib==3.11.1
+plotly==6.9.0
+kaleido==1.3.0
+# so101_hw_interface (Lerobot_ros2)
+feetech-servo-sdk==1.0.0
+deepdiff==9.1.0
+tqdm==4.70.0
