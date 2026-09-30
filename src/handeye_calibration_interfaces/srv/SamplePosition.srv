@@ -1,0 +1,6 @@
+string dataset_dir
+---
+bool success
+string message
+string image_file
+int32 sample_index

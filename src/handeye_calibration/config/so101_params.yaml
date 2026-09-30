@@ -1,0 +1,99 @@
+# Hand-eye pipeline parameters for the SO-101 follower + wrist webcam.
+#
+# Place the arm by hand: motor_bridge drops torque before each sample and
+# restores it after, so the frame and the TF lookup describe the same
+# stationary pose. No recorded pose manifest is involved.
+#
+#   ros2 launch handeye_calibration so101_handeye.launch.py
+#   # second terminal, same file:
+#   ros2 run handeye_calibration auto_calibration_node --ros-args \
+#       --params-file <pkg>/config/so101_params.yaml
+#
+# Kept alongside so100_params.yaml rather than replacing it -- the two arms
+# differ in URDF link names, so they cannot share one file.
+
+so101_motor_bridge:
+  ros__parameters:
+    # USB-to-UART adapter of the Feetech bus.
+    port: /dev/ttyACM0
+
+    # points_file is left at its default. It feeds ~/move_to_next_point, which
+    # this workflow never calls, so the "points_file not found" warning at
+    # startup is expected and has no effect on the run.
+
+auto_calibration_node:
+  ros__parameters:
+    # The motor bridge, in place of run_points_node. Its ~/move_to_next_point
+    # prompts three times on the bridge's own terminal -- relax, lock, return
+    # -- then this node captures. That is why the bridge is started standalone
+    # rather than from the launch file: a launch-started process has no stdin.
+    point_sampler_node: /so101_motor_bridge
+
+    # capture_node's ~/sample_position (image + TF into dataset.yaml).
+    capture_node: /capture_node
+
+    # An upper bound -- Ctrl-C to stop early.
+    num_samples: 15
+    output_dir: /home/cyb/projects/handeye_ws/src/handeye_calibration/data_so101
+    calibration_method: DANIILIDIS
+
+calibration_node:
+  ros__parameters:
+    # false, so the pose step goes through point_sampler_node's
+    # ~/move_to_next_point below. manual_mode true would make this node do the
+    # prompting instead, which is not what we want -- the bridge owns it.
+    manual_mode: false
+
+    # The motor bridge, in place of run_points_node. Its
+    # ~/move_to_next_point prompts three times on the bridge's own terminal --
+    # relax, lock, return -- then this node captures. That is why motor_bridge
+    # is started standalone rather than from the launch file: a launch-started
+    # process has no stdin to prompt on.
+    point_sampler_node: /so101_motor_bridge
+
+    # Unused while manual_mode is false: it is for the alternative where this
+    # node prompts and calls the bridge's ~/relax and ~/lock itself.
+    motor_bridge_node: ''
+
+    # capture_node's own ~/sample_position (image + TF into dataset.yaml).
+    # Note motor_bridge also has a ~/sample_position; that one is the
+    # interactive reposition-by-hand helper and is not what belongs here.
+    capture_node: /capture_node
+
+    # Seconds to let the servos settle onto the locked pose before the frame
+    # and the TF lookup are taken.
+    settle_sec: 0.5
+
+    # An upper bound -- answer 'q' at the prompt to stop early and solve over
+    # what you have.
+    num_samples: 15
+    output_dir: /home/cyb/projects/handeye_ws/src/handeye_calibration/data_so101
+    calibration_method: DANIILIDIS
+
+calibration_node:
+  ros__parameters:
+    # Frames named in handeye_result.yaml (gripper -> camera).
+    # gripper_link is the SO-101 URDF's wrist link -- the last rigid link
+    # before the moving jaw, which is what the camera is bolted to.
+    parent_frame: gripper_link
+    child_frame: webcam_optical_frame
+
+capture_node:
+  ros__parameters:
+    # so101_follower_description link names. They differ from the SO-100
+    # package's base/gripper.
+    base_frame: base_link
+    gripper_frame: gripper_link
+
+    image_topic: /webcam/image_raw
+    camera_info_topic: /webcam/camera_info
+
+    # Must match intrinsics_node's board block in pipeline_params.yaml -- the
+    # same printed board measures the intrinsics and the hand-eye poses.
+    squares_x: 8
+    squares_y: 10
+    square_length_m: 0.015
+    marker_length_m: 0.011
+    dictionary: 4X4_50
+    legacy_pattern: false
+    min_charuco_corners: 6

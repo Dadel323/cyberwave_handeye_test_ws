@@ -1,0 +1,25 @@
+reconstruct_3d_node:
+  ros__parameters:
+    output_dir: 3d_reconstruction_dataset
+    num_samples: 100
+    point_sampler_node: /dome_mover
+    scene_capture_node: /scene_capture_node
+
+    # -- reconstruction parameters --
+    orb_features: 4000
+    match_ratio_test: 0.75
+    min_matches_per_pair: 8
+    max_point_distance_m: 2.0
+
+scene_capture_node:
+  ros__parameters:
+    camera_frame: camera_color_optical_frame
+    base_frame: world
+    image_topic: /camera/color/image_raw
+    camera_info_topic: /camera/color/camera_info
+
+run_points_node:
+  ros__parameters:
+    recorded_points_path: /home/cyb/projects/handeye_ws/src/record_positions/data/manifest.yaml
+    commands_topic: /right_joint_trajectory_controller/joint_trajectory
+    joint_state_topic: /joint_states

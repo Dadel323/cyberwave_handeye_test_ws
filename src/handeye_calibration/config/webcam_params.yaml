@@ -1,0 +1,92 @@
+# usb_cam parameters for a plain UVC webcam (tested against a Logitech C920).
+#
+# Wildcard node key so this file applies regardless of the namespace the node
+# is launched under.
+/**:
+  ros__parameters:
+    # No video_device here: webcam.launch.py always passes its own
+    # `video_device` argument as an override, so a copy in this file could only
+    # ever disagree with the one actually used.
+
+    # MJPEG, decoded to RGB by usb_cam. Roughly a tenth the bytes of YUYV, which
+    # is what makes 1280x720 fit in the isochronous budget -- uncompressed at
+    # ~18 MB/s produced torn frames (two exposures in one buffer, a visible seam
+    # around row 450 and up to 20 px of horizontal shift across it).
+    #
+    # The cost is JPEG ringing on the black/white checker edges, which biases
+    # subpixel corner refinement. That bias applies to the intrinsics solve and
+    # to every board pose in the hand-eye dataset alike, so both stages must run
+    # on this same format -- changing it after measuring intrinsics invalidates
+    # them.
+    #
+    # MJPEG also allows up to 60 Hz here if you ever want it; framerate is left
+    # at 10 because the arm is stationary at every sample.
+    pixel_format: "mjpeg2rgb"
+    image_width: 1280
+    image_height: 720
+    framerate: 10.0
+    io_method: "mmap"
+
+    frame_id: "webcam_optical_frame"
+    camera_name: "webcam"
+
+    # Written by intrinsics_node's ~/calibrate service. Until that file exists,
+    # camera_info_manager warns and publishes an all-zero CameraInfo -- which
+    # capture_node now rejects rather than recording as if it were valid.
+    camera_info_url: "file:///home/cyb/projects/handeye_ws/src/handeye_calibration/config/webcam_intrinsics.yaml"
+
+    # usb_cam skips any of its integer control parameters left at -1, and
+    # contrast/saturation/sharpness/gain already default to -1. brightness does
+    # not -- it defaults to 50 -- so without this line usb_cam writes 50 at
+    # startup and v4l2_controls below has to overwrite it three seconds later.
+    # Every image control is set in v4l2_controls, and only there.
+    brightness: 100
+    gain: 120
+    contrast: 100
+    saturation: 100
+    sharpness: 100
+    white_balance_temperature_auto: 0
+    exposure_auto: 1
+
+
+    # autofocus, autoexposure and auto_white_balance are booleans with no
+    # "leave alone" value, so usb_cam always writes them -- under the
+    # pre-rename kernel names focus_auto, exposure_auto and
+    # white_balance_temperature_auto. The three "unknown control" lines at
+    # startup are that, and are harmless: v4l2_controls sets the current names
+    # afterwards.
+
+# ---------------------------------------------------------------------------
+# Not usb_cam parameters. webcam.launch.py reads this section and applies each
+# entry with v4l2-ctl, because usb_cam's own control setters shell out to
+# kernel control names that were renamed (focus_auto, exposure_auto) and so do
+# nothing on this machine -- see the note above and the log lines
+# "unknown control 'focus_auto'".
+#
+# These belong in config rather than launch arguments so intrinsics and the
+# hand-eye (extrinsics) run share one source of truth. Intrinsics measured at
+# one focus setting do not describe frames captured at another, and a changing
+# exposure alters both motion blur and the apparent position of checker edges
+# under subpixel refinement -- so both stages must use the values below.
+#
+# Order matters and is fixed in webcam.launch.py: a control that an "auto" flag
+# gates is inactive until that flag is off, and writing it first returns EACCES
+# ("focus_absolute: Permission denied").
+v4l2_controls:
+  ros__parameters:
+    # 0 = infinity, 250 = macro (~3 cm), step 5.
+    # ~30 suits the board at 0.3-0.5 m; lower means farther away.
+    focus_automatic_continuous: 0
+    focus_absolute: 5
+
+    # At these exposure times the frame lands near black without lifting this
+    # (mean 22/255, zero markers detected).
+
+    # 1 = Manual Mode, 3 = Aperture Priority. Manual is required: with auto
+    # exposure the driver retimes frames as the board moves through the view.
+    auto_exposure: 1
+
+    # Units of 100 us, range 3-2047 (so 83 = 8.3 ms). Raise it if the board
+    # comes out too dark to detect, but past ~150 (15 ms) hand-held views
+    # start to smear at 10 fps. camera_tuner.py is the quick way to find it.
+    exposure_time_absolute: 20

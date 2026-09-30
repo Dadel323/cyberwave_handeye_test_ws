@@ -1,0 +1,14 @@
+child_frame: webcam_optical_frame
+method: DANIILIDIS
+num_samples: 25
+num_skipped: 5
+parent_frame: gripper_link
+rotation_xyzw:
+  w: 0.06787660438848674
+  x: -0.7023259873118699
+  y: 0.7075809169383311
+  z: -0.03821282648282901
+translation:
+  x: 0.0640296082019497
+  y: 0.0050672288651771175
+  z: -0.06928147559265463

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>record_positions</name>
+  <version>0.0.1</version>
+  <description>
+    Records live joint-space poses (snapshotted from /joint_states) into a
+    manifest.yaml, in the same entries format consumed by
+    handeye_calibration's run_points_node -- lets you jog/teach the arm by
+    hand and save each pose with a single service call.
+  </description>
+  <maintainer email="you@example.com">cyb</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>handeye_calibration_interfaces</depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

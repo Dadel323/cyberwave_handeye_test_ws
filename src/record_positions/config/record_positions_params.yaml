@@ -1,0 +1,23 @@
+snapshot_node:
+  ros__parameters:
+    manifest_path: /home/cyb/projects/handeye_ws/src/record_positions/data/manifest.yaml
+    joint_states_topic: /joint_states
+    overwrite: true
+    joints_to_keep:
+      - openarm_right_joint1
+      - openarm_right_joint2
+      - openarm_right_joint3
+      - openarm_right_joint4
+      - openarm_right_joint5
+      - openarm_right_joint6
+      - openarm_right_joint7
+
+record_positions_node:
+  ros__parameters:
+    num_samples: 30
+    snapshot_node: /snapshot_node
+    # motor_bridge_ns defaults to unset (manual "reposition by hand, press
+    # <Enter>" workflow). To move automatically between snapshots instead,
+    # override it at launch, e.g.:
+    #   ros2 run record_positions record_positions_node --ros-args \
+    #       -p motor_bridge_ns:=/run_points_node

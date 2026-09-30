@@ -1,0 +1,28 @@
+dome_mover:
+  ros__parameters:
+    radius: 0.27
+    center_x: 0.0
+    center_y: -0.25
+    center_z: 0.0
+    max_attempts: 50
+
+    planning_group: right_arm
+    base_frame: world
+    commands_topic: /right_joint_trajectory_controller/joint_trajectory
+    joints_to_keep:
+      - openarm_right_joint1
+      - openarm_right_joint2
+      - openarm_right_joint3
+      - openarm_right_joint4
+      - openarm_right_joint5
+      - openarm_right_joint6
+      - openarm_right_joint7
+
+    attach_camera: true
+    camera_link_name: openarm_right_hand
+    camera_box_size: [0.03, 0.1, 0.03]
+    # Fill these in with your approximated camera mount transform
+    # (translation + quaternion of the camera relative to camera_link_name)
+    # before launching with attach_camera: true.
+    camera_mount_xyz: [0.07,0.0,0.04]
+    camera_mount_qxyzw: [0.0, 0.0, 0.0, 1.0]

@@ -1,0 +1,8 @@
+string dataset_dir
+string method                   # e.g. TSAI, PARK, HORAUD, ANDREFF, DANIILIDIS
+---
+bool success
+string result_yaml_path
+float64[3] translation
+float64[4] rotation_xyzw        # x, y, z, w
+float64[3] stability_stddev     # leave-one-out translation std-dev per axis

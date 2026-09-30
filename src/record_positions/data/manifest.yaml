@@ -1,0 +1,241 @@
+entries:
+- joint_positions:
+    openarm_right_joint1: 0.26836804760814736
+    openarm_right_joint2: -0.1703288319218732
+    openarm_right_joint3: -1.5791180285343707
+    openarm_right_joint4: 0.5365453574425896
+    openarm_right_joint5: -0.5045014114595254
+    openarm_right_joint6: 0.5876630807965224
+    openarm_right_joint7: -1.421950102998398
+- joint_positions:
+    openarm_right_joint1: 0.19359884031433516
+    openarm_right_joint2: -0.10585946440833105
+    openarm_right_joint3: -1.5810254062714577
+    openarm_right_joint4: 0.3324559395742721
+    openarm_right_joint5: -0.9771496147096972
+    openarm_right_joint6: 0.5235751888303977
+    openarm_right_joint7: -1.1327916380560001
+- joint_positions:
+    openarm_right_joint1: 0.12989242389562783
+    openarm_right_joint2: 0.023842221713588074
+    openarm_right_joint3: -1.5810254062714577
+    openarm_right_joint4: 0.3324559395742721
+    openarm_right_joint5: -1.2163347829404128
+    openarm_right_joint6: 0.43240253299763687
+    openarm_right_joint7: -1.128976882581826
+- joint_positions:
+    openarm_right_joint1: 0.09670405127031323
+    openarm_right_joint2: 0.02994583047226662
+    openarm_right_joint3: -1.5810254062714577
+    openarm_right_joint4: 0.029564354924849212
+    openarm_right_joint5: -1.473067826352331
+    openarm_right_joint6: 0.07686732280460795
+    openarm_right_joint7: -1.1026550698100248
+- joint_positions:
+    openarm_right_joint1: 0.09060044251163468
+    openarm_right_joint2: 0.23441672388799795
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.004386968795300206
+    openarm_right_joint5: -1.5707255664911877
+    openarm_right_joint6: -0.22831311512932118
+    openarm_right_joint7: -1.072137026016632
+- joint_positions:
+    openarm_right_joint1: -0.0497825589379719
+    openarm_right_joint2: 0.19283588921950034
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.006294346532387252
+    openarm_right_joint5: -1.506637674525063
+    openarm_right_joint6: -0.22449835965514708
+    openarm_right_joint7: -1.072899977111467
+- joint_positions:
+    openarm_right_joint1: -0.25959411001754873
+    openarm_right_joint2: 0.15697718776226388
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.006294346532387252
+    openarm_right_joint5: -1.411650263218128
+    openarm_right_joint6: -0.19817654688334585
+    openarm_right_joint7: -1.3624399176012805
+- joint_positions:
+    openarm_right_joint1: -0.17681391622796916
+    openarm_right_joint2: -0.03948271915770185
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.006294346532387252
+    openarm_right_joint5: -1.2479972533760577
+    openarm_right_joint6: -0.02155336842908362
+    openarm_right_joint7: -1.2796597238117027
+- joint_positions:
+    openarm_right_joint1: 0.03070878156710144
+    openarm_right_joint2: -0.03948271915770185
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.006294346532387252
+    openarm_right_joint5: -1.2636377508201715
+    openarm_right_joint6: 0.06504158083466827
+    openarm_right_joint7: -1.1324101625085827
+- joint_positions:
+    openarm_right_joint1: 0.2523460746166162
+    openarm_right_joint2: -0.11158159761959219
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.05436026550698081
+    openarm_right_joint5: -0.9859235523002976
+    openarm_right_joint6: 0.269893949797817
+    openarm_right_joint7: -0.8676661326009008
+- joint_positions:
+    openarm_right_joint1: 0.16384374761577725
+    openarm_right_joint2: 0.14400701915007197
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.051308461127641536
+    openarm_right_joint5: -1.4288166628519114
+    openarm_right_joint6: -0.06504158083466827
+    openarm_right_joint7: -0.9248874647135121
+- joint_positions:
+    openarm_right_joint1: 0.29697871366445305
+    openarm_right_joint2: 0.14858472571908088
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.024986648355840302
+    openarm_right_joint5: -1.413557640955215
+    openarm_right_joint6: -0.09060044251163468
+    openarm_right_joint7: -0.7146944380865197
+- joint_positions:
+    openarm_right_joint1: 0.30994888227664497
+    openarm_right_joint2: -0.13942931258106306
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.02574959945067512
+    openarm_right_joint5: -0.8886472877088583
+    openarm_right_joint6: 0.2740901808194085
+    openarm_right_joint7: -0.845540550850691
+- joint_positions:
+    openarm_right_joint1: 0.4846646829938219
+    openarm_right_joint2: -0.1703288319218732
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.20275425345235298
+    openarm_right_joint5: -0.3919661249713897
+    openarm_right_joint6: 0.49038681620508306
+    openarm_right_joint7: -0.9355687800411996
+- joint_positions:
+    openarm_right_joint1: 0.3652628366521693
+    openarm_right_joint2: -0.15888456549935093
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.20199130235751817
+    openarm_right_joint5: -0.577744716563668
+    openarm_right_joint6: 0.48962386511024825
+    openarm_right_joint7: -0.9313725490196081
+- joint_positions:
+    openarm_right_joint1: 0.24967574578469431
+    openarm_right_joint2: -0.1371404592965586
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.20199130235751817
+    openarm_right_joint5: -0.8642328526741441
+    openarm_right_joint6: 0.3767071030746916
+    openarm_right_joint7: -0.8676661326009008
+- joint_positions:
+    openarm_right_joint1: 0.2607385366597992
+    openarm_right_joint2: -0.042153047989623715
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.20199130235751817
+    openarm_right_joint5: -0.9363317311360344
+    openarm_right_joint6: 0.34618905928129884
+    openarm_right_joint7: -1.08129243915465
+- joint_positions:
+    openarm_right_joint1: 0.022316319523918438
+    openarm_right_joint2: 0.024986648355840302
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.0707637140459294
+    openarm_right_joint5: -1.272411688410772
+    openarm_right_joint6: 0.05893797207598972
+    openarm_right_joint7: -1.0996032654306855
+- joint_positions:
+    openarm_right_joint1: 0.05512321660181563
+    openarm_right_joint2: 0.2786678873884174
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.006294346532387252
+    openarm_right_joint5: -1.5783550774395358
+    openarm_right_joint6: -0.33016708628976943
+    openarm_right_joint7: -1.1030365453574422
+- joint_positions:
+    openarm_right_joint1: 0.20237277790493557
+    openarm_right_joint2: 0.18978408484016107
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.006294346532387252
+    openarm_right_joint5: -1.4658197909514001
+    openarm_right_joint6: -0.1825360494392303
+    openarm_right_joint7: -0.8344777599755862
+- joint_positions:
+    openarm_right_joint1: 0.404554818036166
+    openarm_right_joint2: 0.1703288319218732
+    openarm_right_joint3: -1.5978103303578237
+    openarm_right_joint4: 0.006294346532387252
+    openarm_right_joint5: -1.4837491416800184
+    openarm_right_joint6: -0.1905470359349959
+    openarm_right_joint7: -0.5403601129167619
+- joint_positions:
+    openarm_right_joint1: -0.0993743801022351
+    openarm_right_joint2: 0.1287479972533756
+    openarm_right_joint3: 0.2908751049057745
+    openarm_right_joint4: 0.006294346532387252
+    openarm_right_joint5: -0.1913099870298307
+    openarm_right_joint6: 0.04482337682154558
+    openarm_right_joint7: 1.1144808117799645
+- joint_positions:
+    openarm_right_joint1: -0.060845349813076766
+    openarm_right_joint2: -0.028419928282596985
+    openarm_right_joint3: 0.2908751049057745
+    openarm_right_joint4: 0.006294346532387252
+    openarm_right_joint5: -0.052071412222476354
+    openarm_right_joint6: -0.09060044251163468
+    openarm_right_joint7: 1.0362783245593956
+- joint_positions:
+    openarm_right_joint1: -0.5651560234988935
+    openarm_right_joint2: -0.03681239032577999
+    openarm_right_joint3: 0.2985046158541227
+    openarm_right_joint4: 1.150339513237201
+    openarm_right_joint5: -0.11272602426184442
+    openarm_right_joint6: 0.23861295490958945
+    openarm_right_joint7: 0.022316319523918438
+- joint_positions:
+    openarm_right_joint1: -0.44270237277790514
+    openarm_right_joint2: -0.03681239032577999
+    openarm_right_joint3: 0.2981231403067053
+    openarm_right_joint4: 1.3605325398641952
+    openarm_right_joint5: -0.09403372243839137
+    openarm_right_joint6: 0.2653162432288081
+    openarm_right_joint7: -0.36449988555733626
+- joint_positions:
+    openarm_right_joint1: -0.21076523994812035
+    openarm_right_joint2: -0.03376058594644071
+    openarm_right_joint3: 0.2981231403067053
+    openarm_right_joint4: 1.3471808957045859
+    openarm_right_joint5: -0.11577782864118369
+    openarm_right_joint6: 0.27256427862973887
+    openarm_right_joint7: -0.6956206607156492
+- joint_positions:
+    openarm_right_joint1: -0.21076523994812035
+    openarm_right_joint2: -0.03376058594644071
+    openarm_right_joint3: 0.2981231403067053
+    openarm_right_joint4: 1.3471808957045859
+    openarm_right_joint5: -0.11577782864118369
+    openarm_right_joint6: 0.27256427862973887
+    openarm_right_joint7: -0.6956206607156492
+- joint_positions:
+    openarm_right_joint1: -0.21076523994812035
+    openarm_right_joint2: -0.03376058594644071
+    openarm_right_joint3: 0.2981231403067053
+    openarm_right_joint4: 1.3471808957045859
+    openarm_right_joint5: -0.11577782864118369
+    openarm_right_joint6: 0.27256427862973887
+    openarm_right_joint7: -0.6956206607156492
+- joint_positions:
+    openarm_right_joint1: -0.21076523994812035
+    openarm_right_joint2: -0.03376058594644071
+    openarm_right_joint3: 0.2981231403067053
+    openarm_right_joint4: 1.3471808957045859
+    openarm_right_joint5: -0.11577782864118369
+    openarm_right_joint6: 0.27256427862973887
+    openarm_right_joint7: -0.6956206607156492
+- joint_positions:
+    openarm_right_joint1: -0.21076523994812035
+    openarm_right_joint2: -0.03376058594644071
+    openarm_right_joint3: 0.2981231403067053
+    openarm_right_joint4: 1.3471808957045859
+    openarm_right_joint5: -0.11577782864118369
+    openarm_right_joint6: 0.27256427862973887
+    openarm_right_joint7: -0.6956206607156492

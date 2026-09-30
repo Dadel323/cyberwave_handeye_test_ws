@@ -1,0 +1,26 @@
+# Pose-teaching parameters for the SO-100 follower.
+#
+#   ros2 launch record_positions record_positions.launch.py \
+#       params_file:=<this file>
+
+snapshot_node:
+  ros__parameters:
+    manifest_path: /home/cyb/projects/handeye_ws/src/record_positions/data/manifest_so100.yaml
+
+    # motor_bridge publishes here; there is no /joint_states on this robot.
+    joint_states_topic: /so101_follower/joint_states
+    overwrite: true
+
+    # The six Feetech joints, in motor_bridge's naming.
+    joints_to_keep:
+      - shoulder_pan
+      - shoulder_lift
+      - elbow_flex
+      - wrist_flex
+      - wrist_roll
+      - gripper
+
+record_positions_node:
+  ros__parameters:
+    num_samples: 30
+    snapshot_node: /snapshot_node

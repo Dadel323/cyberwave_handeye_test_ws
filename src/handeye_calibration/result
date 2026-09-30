@@ -1,0 +1,14 @@
+child_frame: camera_color_optical_frame
+method: TSAI
+num_samples: 483
+num_skipped: 4
+parent_frame: gripper_link
+rotation_xyzw:
+  w: 0.6849421656911207
+  x: -0.030406693535362416
+  y: -0.006276071334059482
+  z: 0.7279356246092193
+translation:
+  x: 0.07417489978271527
+  y: -0.013292518388156625
+  z: 0.05666593911805076
