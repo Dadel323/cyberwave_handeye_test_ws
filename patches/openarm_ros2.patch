@@ -1,0 +1,208 @@
+diff --git a/openarm_bimanual_moveit_config/launch/demo.launch.py b/openarm_bimanual_moveit_config/launch/demo.launch.py
+index 45a111a..6020056 100644
+--- a/openarm_bimanual_moveit_config/launch/demo.launch.py
++++ b/openarm_bimanual_moveit_config/launch/demo.launch.py
+@@ -224,7 +224,7 @@ def generate_launch_description():
+                               default_value="openarm_description"),
+         DeclareLaunchArgument(
+             "arm_type",
+-            default_value="openarm_v2.0",
++            default_value="openarm_v1.0",
+             description="Arm type. Accepts: v1.0, v10, openarm_v1.0, v2.0, v20, openarm_v2.0, etc."
+         ),
+         DeclareLaunchArgument("use_fake_hardware", default_value="true"),
+@@ -237,8 +237,8 @@ def generate_launch_description():
+         DeclareLaunchArgument("runtime_config_package",
+                               default_value="openarm_bringup"),
+         DeclareLaunchArgument("arm_prefix", default_value=""),
+-        DeclareLaunchArgument("right_can_interface", default_value="can0"),
+-        DeclareLaunchArgument("left_can_interface", default_value="can1"),
++        DeclareLaunchArgument("right_can_interface", default_value="can1"),
++        DeclareLaunchArgument("left_can_interface", default_value="can0"),
+         DeclareLaunchArgument(
+             "controllers_file",
+             default_value="openarm_bimanual_moveit_controllers.yaml"),
+diff --git a/openarm_bringup/config/controllers/openarm_bimanual_controllers.yaml b/openarm_bringup/config/controllers/openarm_bimanual_controllers.yaml
+index 11bc51f..767c4f4 100644
+--- a/openarm_bringup/config/controllers/openarm_bimanual_controllers.yaml
++++ b/openarm_bringup/config/controllers/openarm_bimanual_controllers.yaml
+@@ -15,7 +15,7 @@
+ 
+ controller_manager:
+   ros__parameters:
+-    update_rate: 750  # Hz
++    update_rate: 500  # Hz
+ 
+     joint_state_broadcaster:
+       type: joint_state_broadcaster/JointStateBroadcaster
+@@ -93,7 +93,7 @@ left_joint_trajectory_controller:
+       - position
+ 
+     # to achieve high real-time performance, interpolation is disabled and the controller is expected to receive high-frequency commands --- IGNORE ---
+-    interpolation_method: "none"
++    interpolation_method: "splines"
+     interpolate_from_desired_state: true
+ 
+     state_publish_rate: 50.0
+@@ -121,7 +121,7 @@ left_gripper_controller:
+     state_interfaces:
+       - position
+ 
+-    interpolation_method: "none"
++    interpolation_method: "splines"
+     constraints:
+       stopped_velocity_tolerance: 0.0
+       goal_time: 0.0
+@@ -174,7 +174,7 @@ right_joint_trajectory_controller:
+     state_interfaces:
+       - position
+ 
+-    interpolation_method: "none"
++    interpolation_method: "splines"
+     interpolate_from_desired_state: true
+ 
+     state_publish_rate: 50.0
+diff --git a/openarm_bringup/launch/openarm.bimanual.launch.py b/openarm_bringup/launch/openarm.bimanual.launch.py
+index 2b5fb46..2c8da7a 100644
+--- a/openarm_bringup/launch/openarm.bimanual.launch.py
++++ b/openarm_bringup/launch/openarm.bimanual.launch.py
+@@ -55,13 +55,15 @@ def namespace_from_context(context, arm_prefix):
+ 
+ 
+ def generate_robot_description(context: LaunchContext, description_package, description_file,
+-                               arm_type, use_fake_hardware, right_can_interface, left_can_interface):
++                               arm_type, use_fake_hardware, right_can_interface, left_can_interface,
++                               relax_right):
+     """Generate robot description using xacro processing."""
+     description_package_str = context.perform_substitution(description_package)
+     arm_type_str = context.perform_substitution(arm_type)
+     use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
+     right_can_interface_str = context.perform_substitution(right_can_interface)
+     left_can_interface_str = context.perform_substitution(left_can_interface)
++    relax_right_str = context.perform_substitution(relax_right)
+ 
+     folder_name, file_name = resolve_arm_config(arm_type_str)
+ 
+@@ -79,6 +81,7 @@ def generate_robot_description(context: LaunchContext, description_package, desc
+             "ros2_control": "true",
+             "right_can_interface": right_can_interface_str,
+             "left_can_interface": left_can_interface_str,
++            "relax_right": relax_right_str,
+         }
+     ).toprettyxml(indent="  ")
+ 
+@@ -87,13 +90,13 @@ def generate_robot_description(context: LaunchContext, description_package, desc
+ 
+ def robot_nodes_spawner(context: LaunchContext, description_package, description_file,
+                         arm_type, use_fake_hardware, controllers_file,
+-                        right_can_interface, left_can_interface, arm_prefix):
++                        right_can_interface, left_can_interface, arm_prefix, relax_right):
+     """Spawn both robot state publisher and control nodes with shared robot description."""
+     namespace = namespace_from_context(context, arm_prefix)
+ 
+     robot_description = generate_robot_description(
+         context, description_package, description_file, arm_type,
+-        use_fake_hardware, right_can_interface, left_can_interface,
++        use_fake_hardware, right_can_interface, left_can_interface, relax_right,
+     )
+ 
+     controllers_file_str = context.perform_substitution(controllers_file)
+@@ -165,17 +168,17 @@ def generate_launch_description():
+         ),
+         DeclareLaunchArgument(
+             "description_file",
+-            default_value="v20.urdf.xacro",
++            default_value="v10.urdf.xacro",
+             description="URDF/XACRO description file with the robot.",
+         ),
+         DeclareLaunchArgument(
+             "arm_type",
+-            default_value="openarm_v2.0",
++            default_value="openarm_v1.0",
+             description="Arm type. Accepts: v1.0, v10, openarm_v1.0, v2.0, v20, openarm_v2.0, etc.",
+         ),
+         DeclareLaunchArgument(
+             "use_fake_hardware",
+-            default_value="true",
++            default_value="false",
+             description="Use fake hardware instead of real hardware.",
+         ),
+         DeclareLaunchArgument(
+@@ -197,12 +200,12 @@ def generate_launch_description():
+         ),
+         DeclareLaunchArgument(
+             "right_can_interface",
+-            default_value="can0",
++            default_value="can1",
+             description="CAN interface to use for the right arm.",
+         ),
+         DeclareLaunchArgument(
+             "left_can_interface",
+-            default_value="can1",
++            default_value="can0",
+             description="CAN interface to use for the left arm.",
+         ),
+         DeclareLaunchArgument(
+@@ -210,6 +213,11 @@ def generate_launch_description():
+             default_value="openarm_bimanual_controllers.yaml",
+             description="Controllers file to use.",
+         ),
++        DeclareLaunchArgument(
++            "relax_right",
++            default_value="false",
++            description="Relax the right arm (zero position gains) instead of using normal control gains.",
++        ),
+     ]
+ 
+     description_package = LaunchConfiguration("description_package")
+@@ -222,6 +230,7 @@ def generate_launch_description():
+     right_can_interface = LaunchConfiguration("right_can_interface")
+     left_can_interface = LaunchConfiguration("left_can_interface")
+     arm_prefix = LaunchConfiguration("arm_prefix")
++    relax_right = LaunchConfiguration("relax_right")
+ 
+     controllers_file = PathJoinSubstitution(
+         [FindPackageShare(runtime_config_package), "config",
+@@ -232,7 +241,7 @@ def generate_launch_description():
+         function=robot_nodes_spawner,
+         args=[description_package, description_file, arm_type,
+               use_fake_hardware, controllers_file,
+-              right_can_interface, left_can_interface, arm_prefix]
++              right_can_interface, left_can_interface, arm_prefix, relax_right]
+     )
+ 
+     rviz_config_file = PathJoinSubstitution(
+diff --git a/openarm_hardware/src/openarm_simple_hardware.cpp b/openarm_hardware/src/openarm_simple_hardware.cpp
+index 9321c4a..fc4ed35 100644
+--- a/openarm_hardware/src/openarm_simple_hardware.cpp
++++ b/openarm_hardware/src/openarm_simple_hardware.cpp
+@@ -229,7 +229,28 @@ hardware_interface::CallbackReturn OpenArmHW::on_activate(
+   openarm_->recv_all();
+ 
+   // Return to zero position
+-  return_to_zero();
++  // return_to_zero();
++  // Hold current position instead of returning to zero
++  openarm_->refresh_all();
++  std::this_thread::sleep_for(std::chrono::milliseconds(10));
++  openarm_->recv_all();
++
++  const auto& arm_motors = openarm_->get_arm().get_motors();
++  for (size_t i = 0; i < ARM_DOF && i < arm_motors.size(); ++i) {
++    pos_states_[i] = arm_motors[i].get_position();
++    pos_commands_[i] = pos_states_[i];
++    vel_commands_[i] = 0.0;
++    tau_commands_[i] = 0.0;
++  }
++
++  if (hand_ && joint_names_.size() > ARM_DOF) {
++    const auto& gripper_motors = openarm_->get_gripper().get_motors();
++    if (!gripper_motors.empty()) {
++      pos_states_[ARM_DOF] =
++          motor_radians_to_joint(gripper_motors[0].get_position());
++      pos_commands_[ARM_DOF] = pos_states_[ARM_DOF];
++    }
++  }
+ 
+   RCLCPP_INFO(rclcpp::get_logger("OpenArmHW"), "OpenArm V10 activated");
+   return CallbackReturn::SUCCESS;

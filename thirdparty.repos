@@ -1,0 +1,23 @@
+# Third-party packages, pinned to the commits this workspace was tested with.
+# Local modifications live in patches/<name>.patch.
+repositories:
+  Lerobot_ros2:
+    type: git
+    url: https://github.com/AgRoboticsResearch/Lerobot_ros2.git
+    version: 1e0684bba543f2fe32e8c3e583783e2efca8da7b
+  openarm_description:
+    type: git
+    url: https://github.com/enactic/openarm_description.git
+    version: 6c7b720f1ba48e8bafa3a3dc752c45f397b42221
+  openarm_ros2:
+    type: git
+    url: https://github.com/enactic/openarm_ros2.git
+    version: 4e837e1d0dae692ff67b560b69d8d281d7a8d4ed
+  OrbbecSDK_ROS2:
+    type: git
+    url: https://github.com/orbbec/OrbbecSDK_ROS2.git
+    version: ec6bc228b79656449bea289f2967a2f44ce52c57
+  topic_based_ros2_control:
+    type: git
+    url: https://github.com/PickNikRobotics/topic_based_ros2_control.git
+    version: 6bd8d55e1c4ad3188770fe5c8b93b942bcede4a2

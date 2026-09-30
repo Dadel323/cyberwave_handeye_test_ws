@@ -1,0 +1,637 @@
+diff --git a/assets/robot/openarm_v1.0/config/arm/control_gains.yaml b/assets/robot/openarm_v1.0/config/arm/control_gains.yaml
+index 54452fd..070da3e 100644
+--- a/assets/robot/openarm_v1.0/config/arm/control_gains.yaml
++++ b/assets/robot/openarm_v1.0/config/arm/control_gains.yaml
+@@ -29,17 +29,49 @@ joint4:
+   kd: 2.0
+ 
+ joint5:
+-  kp: 10.0
+-  kd: 0.7
++  kp: 20.0
++  kd: 1.0
+ 
+ joint6:
+-  kp: 10.0
+-  kd: 0.6
++  kp: 20.0
++  kd: 1.0
+ 
+ joint7:
+-  kp: 10.0
+-  kd: 0.5
++  kp: 20.0
++  kd: 1.0
+ 
+ hand:
+   kp: 5.0
+   kd: 0.1
++
++joint21:
++  kp: 0.0
++  kd: 0.0
++
++joint22:
++  kp: 0.0
++  kd: 0.0
++
++joint23:
++  kp: 0.0
++  kd: 0.0
++
++joint24:
++  kp: 0.0
++  kd: 0.0
++
++joint25:
++  kp: 0.0
++  kd: 0.0
++
++joint26:
++  kp: 0.0
++  kd: 0.0
++
++joint27:
++  kp: 0.0
++  kd: 0.0
++
++hand2:
++  kp: 0.0
++  kd: 0.0
+\ No newline at end of file
+diff --git a/assets/robot/openarm_v1.0/urdf/openarm_v10.urdf.xacro b/assets/robot/openarm_v1.0/urdf/openarm_v10.urdf.xacro
+index 23a1bad..dc3263b 100644
+--- a/assets/robot/openarm_v1.0/urdf/openarm_v10.urdf.xacro
++++ b/assets/robot/openarm_v1.0/urdf/openarm_v10.urdf.xacro
+@@ -36,6 +36,7 @@ limitations under the License.
+   <xacro:arg name="left_arm_base_xyz" default="0.0 0.031 0.698" />
+   <xacro:arg name="left_arm_base_rpy" default="-1.5708 0 0" />
+   <xacro:arg name="can_fd" default="true" />
++  <xacro:arg name="relax_right" default="false" />
+   <xacro:property name="accepted_arm_types" value="${('v10', 'v1.0', 'v1_0', 'openarm_v10', 'openarm_v1.0', 'openarm_v1_0')}" />
+   <xacro:if value="${'$(arg arm_type)' not in accepted_arm_types}">
+     ${xacro.error('assets/robot/openarm_v1.0 supports arm_type in ' + str(accepted_arm_types) + ' (got: $(arg arm_type)). Use assets/robot/openarm_v2.0 for newer hardware variants.')}
+@@ -85,6 +86,7 @@ limitations under the License.
+   right_arm_base_rpy="$(arg right_arm_base_rpy)"
+   left_arm_base_rpy="$(arg left_arm_base_rpy)"
+   can_fd="$(arg can_fd)"
++  relax_right="$(arg relax_right)"
+   />
+ 
+ </robot>
+diff --git a/assets/robot/openarm_v1.0/urdf/robot/openarm_robot.xacro b/assets/robot/openarm_v1.0/urdf/robot/openarm_robot.xacro
+index 07add2c..fc9c175 100644
+--- a/assets/robot/openarm_v1.0/urdf/robot/openarm_robot.xacro
++++ b/assets/robot/openarm_v1.0/urdf/robot/openarm_robot.xacro
+@@ -52,6 +52,7 @@ limitations under the License.
+             left_arm_prefix:='left_'
+             right_arm_prefix:='right_'
+             can_fd:='true'
++            relax_right:=false
+             "
+             >
+ 
+@@ -147,7 +148,8 @@ limitations under the License.
+             left_arm_prefix="${left_arm_prefix}"
+             right_arm_prefix="${right_arm_prefix}"
+             hand="true"
+-            ee_type="${ee_type}"/>
++            ee_type="${ee_type}"
++            relax_right="${relax_right}"/>
+         </xacro:if>
+     </xacro:if>
+ 
+diff --git a/assets/robot/openarm_v1.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro b/assets/robot/openarm_v1.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro
+index 999b443..050eae2 100644
+--- a/assets/robot/openarm_v1.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro
++++ b/assets/robot/openarm_v1.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro
+@@ -17,15 +17,16 @@ limitations under the License.
+ <xacro:macro name="openarm_bimanual_ros2_control"
+          params="arm_type
+              control_gains
+-             left_can_interface:=^|can1
+-             right_can_interface:=^|can0
++             left_can_interface:=^|can0
++             right_can_interface:=^|can1
+              use_fake_hardware:=^|true
+              fake_sensor_commands:=^|false
+              hand:=^|true
+              ee_type:=^|parallel_link
+              left_arm_prefix:=^|left_
+              right_arm_prefix:=^|right_
+-             can_fd:=^|true">
++             can_fd:=^|true
++             relax_right:=^|false">
+ 
+     <!-- Left Arm Hardware Interface -->
+     <ros2_control name="openarm_left_hardware_interface" type="system">
+@@ -113,23 +114,41 @@ limitations under the License.
+             <param name="hand">${hand}</param>
+             <param name="can_fd">${can_fd}</param>
+             <param name="ee_type">${ee_type}</param>
+-            <param name="kp1">${control_gains['joint1']['kp']}</param>
+-            <param name="kp2">${control_gains['joint2']['kp']}</param>
+-            <param name="kp3">${control_gains['joint3']['kp']}</param>
+-            <param name="kp4">${control_gains['joint4']['kp']}</param>
+-            <param name="kp5">${control_gains['joint5']['kp']}</param>
+-            <param name="kp6">${control_gains['joint6']['kp']}</param>
+-            <param name="kp7">${control_gains['joint7']['kp']}</param>
+-            <param name="kd1">${control_gains['joint1']['kd']}</param>
+-            <param name="kd2">${control_gains['joint2']['kd']}</param>
+-            <param name="kd3">${control_gains['joint3']['kd']}</param>
+-            <param name="kd4">${control_gains['joint4']['kd']}</param>
+-            <param name="kd5">${control_gains['joint5']['kd']}</param>
+-            <param name="kd6">${control_gains['joint6']['kd']}</param>
+-            <param name="kd7">${control_gains['joint7']['kd']}</param>
++            <xacro:if value="${relax_right}">
++              <param name="kp1">${control_gains['joint21']['kp']}</param>
++              <param name="kp2">${control_gains['joint22']['kp']}</param>
++              <param name="kp3">${control_gains['joint23']['kp']}</param>
++              <param name="kp4">${control_gains['joint24']['kp']}</param>
++              <param name="kp5">${control_gains['joint25']['kp']}</param>
++              <param name="kp6">${control_gains['joint26']['kp']}</param>
++              <param name="kp7">${control_gains['joint27']['kp']}</param>
++              <param name="kd1">${control_gains['joint21']['kd']}</param>
++              <param name="kd2">${control_gains['joint22']['kd']}</param>
++              <param name="kd3">${control_gains['joint23']['kd']}</param>
++              <param name="kd4">${control_gains['joint24']['kd']}</param>
++              <param name="kd5">${control_gains['joint25']['kd']}</param>
++              <param name="kd6">${control_gains['joint26']['kd']}</param>
++              <param name="kd7">${control_gains['joint27']['kd']}</param>
++            </xacro:if>
++            <xacro:unless value="${relax_right}">
++              <param name="kp1">${control_gains['joint1']['kp']}</param>
++              <param name="kp2">${control_gains['joint2']['kp']}</param>
++              <param name="kp3">${control_gains['joint3']['kp']}</param>
++              <param name="kp4">${control_gains['joint4']['kp']}</param>
++              <param name="kp5">${control_gains['joint5']['kp']}</param>
++              <param name="kp6">${control_gains['joint6']['kp']}</param>
++              <param name="kp7">${control_gains['joint7']['kp']}</param>
++              <param name="kd1">${control_gains['joint1']['kd']}</param>
++              <param name="kd2">${control_gains['joint2']['kd']}</param>
++              <param name="kd3">${control_gains['joint3']['kd']}</param>
++              <param name="kd4">${control_gains['joint4']['kd']}</param>
++              <param name="kd5">${control_gains['joint5']['kd']}</param>
++              <param name="kd6">${control_gains['joint6']['kd']}</param>
++              <param name="kd7">${control_gains['joint7']['kd']}</param>
++            </xacro:unless>
+             <xacro:if value="${hand}">
+-              <param name="kp_hand">${control_gains['hand']['kp']}</param>
+-              <param name="kd_hand">${control_gains['hand']['kd']}</param>
++              <param name="kp_hand">${control_gains['hand2']['kp']}</param>
++              <param name="kd_hand">${control_gains['hand2']['kd']}</param>
+             </xacro:if>
+           </xacro:unless>
+         </hardware>
+diff --git a/assets/robot/openarm_v1.0/urdf/ros2_control/openarm.ros2_control.xacro b/assets/robot/openarm_v1.0/urdf/ros2_control/openarm.ros2_control.xacro
+index 71dc449..6b71442 100644
+--- a/assets/robot/openarm_v1.0/urdf/ros2_control/openarm.ros2_control.xacro
++++ b/assets/robot/openarm_v1.0/urdf/ros2_control/openarm.ros2_control.xacro
+@@ -43,20 +43,20 @@ limitations under the License.
+             <param name="hand">${hand}</param>
+             <param name="can_fd">${can_fd}</param>
+             <param name="ee_type">${ee_type}</param>
+-            <param name="kp1">${control_gains['joint1']['kp']}</param>
+-            <param name="kp2">${control_gains['joint2']['kp']}</param>
+-            <param name="kp3">${control_gains['joint3']['kp']}</param>
+-            <param name="kp4">${control_gains['joint4']['kp']}</param>
+-            <param name="kp5">${control_gains['joint5']['kp']}</param>
+-            <param name="kp6">${control_gains['joint6']['kp']}</param>
+-            <param name="kp7">${control_gains['joint7']['kp']}</param>
+-            <param name="kd1">${control_gains['joint1']['kd']}</param>
+-            <param name="kd2">${control_gains['joint2']['kd']}</param>
+-            <param name="kd3">${control_gains['joint3']['kd']}</param>
+-            <param name="kd4">${control_gains['joint4']['kd']}</param>
+-            <param name="kd5">${control_gains['joint5']['kd']}</param>
+-            <param name="kd6">${control_gains['joint6']['kd']}</param>
+-            <param name="kd7">${control_gains['joint7']['kd']}</param>
++            <param name="kp1">${control_gains['joint21']['kp']}</param>
++            <param name="kp2">${control_gains['joint22']['kp']}</param>
++            <param name="kp3">${control_gains['joint23']['kp']}</param>
++            <param name="kp4">${control_gains['joint24']['kp']}</param>
++            <param name="kp5">${control_gains['joint25']['kp']}</param>
++            <param name="kp6">${control_gains['joint26']['kp']}</param>
++            <param name="kp7">${control_gains['joint27']['kp']}</param>
++            <param name="kd1">${control_gains['joint21']['kd']}</param>
++            <param name="kd2">${control_gains['joint22']['kd']}</param>
++            <param name="kd3">${control_gains['joint23']['kd']}</param>
++            <param name="kd4">${control_gains['joint24']['kd']}</param>
++            <param name="kd5">${control_gains['joint25']['kd']}</param>
++            <param name="kd6">${control_gains['joint26']['kd']}</param>
++            <param name="kd7">${control_gains['joint27']['kd']}</param>
+           </xacro:if>
+         </hardware>
+ 
+diff --git a/assets/robot/openarm_v2.0/config/arm/control/control_gains.yaml b/assets/robot/openarm_v2.0/config/arm/control/control_gains.yaml
+index 7364f59..a4cd088 100644
+--- a/assets/robot/openarm_v2.0/config/arm/control/control_gains.yaml
++++ b/assets/robot/openarm_v2.0/config/arm/control/control_gains.yaml
+@@ -39,3 +39,32 @@ joint6:
+ joint7:
+   kp: 10.0
+   kd: 0.5
++
++joint21:
++  kp: 0.0
++  kd: 0.0
++
++joint22:
++  kp: 0.0
++  kd: 0.0
++
++joint23:
++  kp: 0.0
++  kd: 0.0
++
++joint24:
++  kp: 0.0
++  kd: 0.0
++
++joint25:
++  kp: 0.0
++  kd: 0.0
++
++joint26:
++  kp: 0.0
++  kd: 0.0
++
++joint27:
++  kp: 0.0
++  kd: 0.0
++
+diff --git a/assets/robot/openarm_v2.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro b/assets/robot/openarm_v2.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro
+index e7b25ad..5b38373 100644
+--- a/assets/robot/openarm_v2.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro
++++ b/assets/robot/openarm_v2.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro
+@@ -17,8 +17,8 @@ limitations under the License.
+ <xacro:macro name="openarm_bimanual_ros2_control"
+          params="arm_type
+              control_gains
+-             left_can_interface:=^|can1
+-             right_can_interface:=^|can0
++             left_can_interface:=^|can0
++             right_can_interface:=^|can1
+              use_fake_hardware:=^|false
+              fake_sensor_commands:=^|false
+              ee_type:=^|pinch_gripper
+@@ -114,20 +114,20 @@ limitations under the License.
+             <param name="arm_prefix">${right_arm_prefix}</param>
+             <param name="can_fd">${can_fd}</param>
+             <param name="ee_type">${ee_type}</param>
+-            <param name="kp1">${control_gains['joint1']['kp']}</param>
+-            <param name="kp2">${control_gains['joint2']['kp']}</param>
+-            <param name="kp3">${control_gains['joint3']['kp']}</param>
+-            <param name="kp4">${control_gains['joint4']['kp']}</param>
+-            <param name="kp5">${control_gains['joint5']['kp']}</param>
+-            <param name="kp6">${control_gains['joint6']['kp']}</param>
+-            <param name="kp7">${control_gains['joint7']['kp']}</param>
+-            <param name="kd1">${control_gains['joint1']['kd']}</param>
+-            <param name="kd2">${control_gains['joint2']['kd']}</param>
+-            <param name="kd3">${control_gains['joint3']['kd']}</param>
+-            <param name="kd4">${control_gains['joint4']['kd']}</param>
+-            <param name="kd5">${control_gains['joint5']['kd']}</param>
+-            <param name="kd6">${control_gains['joint6']['kd']}</param>
+-            <param name="kd7">${control_gains['joint7']['kd']}</param>
++            <param name="kp1">${control_gains['joint21']['kp']}</param>
++            <param name="kp2">${control_gains['joint22']['kp']}</param>
++            <param name="kp3">${control_gains['joint23']['kp']}</param>
++            <param name="kp4">${control_gains['joint24']['kp']}</param>
++            <param name="kp5">${control_gains['joint25']['kp']}</param>
++            <param name="kp6">${control_gains['joint26']['kp']}</param>
++            <param name="kp7">${control_gains['joint27']['kp']}</param>
++            <param name="kd1">${control_gains['joint21']['kd']}</param>
++            <param name="kd2">${control_gains['joint22']['kd']}</param>
++            <param name="kd3">${control_gains['joint23']['kd']}</param>
++            <param name="kd4">${control_gains['joint24']['kd']}</param>
++            <param name="kd5">${control_gains['joint25']['kd']}</param>
++            <param name="kd6">${control_gains['joint26']['kd']}</param>
++            <param name="kd7">${control_gains['joint27']['kd']}</param>
+           </xacro:unless>
+         </hardware>
+ 
+diff --git a/rviz/bimanual.rviz b/rviz/bimanual.rviz
+index e58c036..83c46ca 100644
+--- a/rviz/bimanual.rviz
++++ b/rviz/bimanual.rviz
+@@ -5,8 +5,12 @@ Panels:
+     Property Tree Widget:
+       Expanded:
+         - /Global Options1
++        - /TF1
++        - /TF1/Frames1
++        - /Camera1
++        - /CameraInfo1
+       Splitter Ratio: 0.5
+-    Tree Height: 139
++    Tree Height: 793
+   - Class: rviz_common/Views
+     Expanded:
+       - /Current View1
+@@ -51,21 +55,27 @@ Visualization Manager:
+         Expand Link Details: false
+         Expand Tree: false
+         Link Tree Style: Links in Alphabetic Order
+-        openarm_left_hand:
++        openarm_body_link0:
+           Alpha: 1
+           Show Axes: false
+           Show Trail: false
+           Value: true
+-        openarm_left_hand_tcp:
++        openarm_left_base_link:
+           Alpha: 1
+           Show Axes: false
+           Show Trail: false
+-        openarm_left_left_finger:
++          Value: true
++        openarm_left_ee_base_link:
++          Alpha: 1
++          Show Axes: false
++          Show Trail: false
++          Value: true
++        openarm_left_ee_link1:
+           Alpha: 1
+           Show Axes: false
+           Show Trail: false
+           Value: true
+-        openarm_left_link0:
++        openarm_left_ee_link2:
+           Alpha: 1
+           Show Axes: false
+           Show Trail: false
+@@ -100,35 +110,22 @@ Visualization Manager:
+           Show Axes: false
+           Show Trail: false
+           Value: true
+-        openarm_left_link7:
++        openarm_right_base_link:
+           Alpha: 1
+           Show Axes: false
+           Show Trail: false
+           Value: true
+-        openarm_left_link8:
+-          Alpha: 1
+-          Show Axes: false
+-          Show Trail: false
+-        openarm_left_right_finger:
++        openarm_right_ee_base_link:
+           Alpha: 1
+           Show Axes: false
+           Show Trail: false
+           Value: true
+-        openarm_right_hand:
++        openarm_right_ee_link1:
+           Alpha: 1
+           Show Axes: false
+           Show Trail: false
+           Value: true
+-        openarm_right_hand_tcp:
+-          Alpha: 1
+-          Show Axes: false
+-          Show Trail: false
+-        openarm_right_left_finger:
+-          Alpha: 1
+-          Show Axes: false
+-          Show Trail: false
+-          Value: true
+-        openarm_right_link0:
++        openarm_right_ee_link2:
+           Alpha: 1
+           Show Axes: false
+           Show Trail: false
+@@ -163,25 +160,6 @@ Visualization Manager:
+           Show Axes: false
+           Show Trail: false
+           Value: true
+-        openarm_right_link7:
+-          Alpha: 1
+-          Show Axes: false
+-          Show Trail: false
+-          Value: true
+-        openarm_right_link8:
+-          Alpha: 1
+-          Show Axes: false
+-          Show Trail: false
+-        openarm_right_right_finger:
+-          Alpha: 1
+-          Show Axes: false
+-          Show Trail: false
+-          Value: true
+-        v10_body_link0:
+-          Alpha: 1
+-          Show Axes: false
+-          Show Trail: false
+-          Value: true
+         world:
+           Alpha: 1
+           Show Axes: false
+@@ -196,18 +174,166 @@ Visualization Manager:
+       Visual Enabled: true
+     - Class: rviz_default_plugins/TF
+       Enabled: true
++      Filter (blacklist): ""
++      Filter (whitelist): ""
+       Frame Timeout: 15
+       Frames:
+-        All Enabled: true
++        All Enabled: false
++        camera_color_frame:
++          Value: false
++        camera_color_optical_frame:
++          Value: false
++        camera_depth_frame:
++          Value: false
++        camera_depth_optical_frame:
++          Value: false
++        camera_link:
++          Value: false
++        gripper_link:
++          Value: false
++        openarm_body_link0:
++          Value: false
++        openarm_left_base_link:
++          Value: false
++        openarm_left_ee_base_link:
++          Value: false
++        openarm_left_ee_link1:
++          Value: true
++        openarm_left_ee_link2:
++          Value: false
++        openarm_left_link1:
++          Value: false
++        openarm_left_link2:
++          Value: false
++        openarm_left_link3:
++          Value: false
++        openarm_left_link4:
++          Value: false
++        openarm_left_link5:
++          Value: false
++        openarm_left_link6:
++          Value: false
++        openarm_right_base_link:
++          Value: false
++        openarm_right_ee_base_link:
++          Value: false
++        openarm_right_ee_link1:
++          Value: false
++        openarm_right_ee_link2:
++          Value: false
++        openarm_right_link1:
++          Value: false
++        openarm_right_link2:
++          Value: false
++        openarm_right_link3:
++          Value: false
++        openarm_right_link4:
++          Value: false
++        openarm_right_link5:
++          Value: false
++        openarm_right_link6:
++          Value: false
++        world:
++          Value: false
+       Marker Scale: 1
+       Name: TF
+       Show Arrows: true
+       Show Axes: true
+-      Show Names: true
++      Show Names: false
+       Tree:
+-        {}
++        world:
++          openarm_body_link0:
++            openarm_left_base_link:
++              openarm_left_link1:
++                openarm_left_link2:
++                  openarm_left_link3:
++                    openarm_left_link4:
++                      openarm_left_link5:
++                        openarm_left_link6:
++                          openarm_left_ee_base_link:
++                            openarm_left_ee_link1:
++                              camera_color_optical_frame:
++                                {}
++                            openarm_left_ee_link2:
++                              {}
++            openarm_right_base_link:
++              openarm_right_link1:
++                openarm_right_link2:
++                  openarm_right_link3:
++                    openarm_right_link4:
++                      openarm_right_link5:
++                        openarm_right_link6:
++                          openarm_right_ee_base_link:
++                            openarm_right_ee_link1:
++                              {}
++                            openarm_right_ee_link2:
++                              {}
++      Update Interval: 0
++      Value: true
++    - Alpha: 1
++      Class: rviz_default_plugins/RobotModel
++      Collision Enabled: false
++      Description File: ""
++      Description Source: Topic
++      Description Topic:
++        Depth: 5
++        Durability Policy: Volatile
++        History Policy: Keep Last
++        Reliability Policy: Reliable
++        Value: ""
++      Enabled: true
++      Links:
++        All Links Enabled: true
++        Expand Joint Details: false
++        Expand Link Details: false
++        Expand Tree: false
++        Link Tree Style: ""
++      Mass Properties:
++        Inertia: false
++        Mass: false
++      Name: RobotModel
++      TF Prefix: ""
+       Update Interval: 0
+-      Value: false
++      Value: true
++      Visual Enabled: true
++    - Class: rviz_default_plugins/Camera
++      Enabled: true
++      Far Plane Distance: 100
++      Image Rendering: background and overlay
++      Name: Camera
++      Overlay Alpha: 0.5
++      Topic:
++        Depth: 5
++        Durability Policy: Volatile
++        History Policy: Keep Last
++        Reliability Policy: Reliable
++        Value: /camera/color/image_raw
++      Value: true
++      Visibility:
++        CameraInfo: true
++        Grid: true
++        RobotModel: true
++        TF: true
++        Value: true
++      Zoom Factor: 1
++    - Alpha: 0.5
++      Class: rviz_default_plugins/CameraInfo
++      Color: 85; 255; 255
++      Edge color: 125; 125; 125
++      Enabled: true
++      Far clip: 1
++      Name: CameraInfo
++      Not show side polygons: true
++      Show edges: true
++      Show polygons: true
++      Topic:
++        Depth: 5
++        Durability Policy: Volatile
++        Filter size: 10
++        History Policy: Keep Last
++        Reliability Policy: Reliable
++        Value: /camera/color/camera_info
++      Value: true
+   Enabled: true
+   Global Options:
+     Background Color: 48; 48; 48
+@@ -223,7 +349,7 @@ Visualization Manager:
+   Views:
+     Current:
+       Class: rviz_default_plugins/Orbit
+-      Distance: 5
++      Distance: 2.288583278656006
+       Enable Stereo Rendering:
+         Stereo Eye Separation: 0.05999999865889549
+         Stereo Focal Distance: 1
+@@ -238,20 +364,22 @@ Visualization Manager:
+       Invert Z Axis: false
+       Name: Current View
+       Near Clip Distance: 0.009999999776482582
+-      Pitch: 0.33000001311302185
++      Pitch: -0.3149987459182739
+       Target Frame: <Fixed Frame>
+       Value: Orbit (rviz)
+-      Yaw: 5.5
++      Yaw: 2.300004243850708
+     Saved: ~
+ Window Geometry:
++  Camera:
++    collapsed: false
+   Displays:
+     collapsed: false
+-  Height: 826
++  Height: 2091
+   Hide Left Dock: false
+   Hide Right Dock: false
+-  QMainWindow State: 000000ff00000000fd0000000100000000000001da000002a8fc0200000002fb000000100044006900730070006c0061007900730100000069000001790000017800fffffffb0000000a0056006900650077007301000001ee000001230000012300ffffff000002ca000002a800000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
++  QMainWindow State: 000000ff00000000fd0000000100000000000001da000007d1fc0200000003fb000000100044006900730070006c006100790073010000003d000003e0000000c900fffffffb0000000a005600690065007700730100000423000002fe000000a400fffffffb0000000c00430061006d0065007200610100000727000000e70000001600ffffff00000cde000007d100000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+   Views:
+     collapsed: false
+-  Width: 1200
+-  X: 42
+-  Y: 64
++  Width: 3774
++  X: 66
++  Y: 32
