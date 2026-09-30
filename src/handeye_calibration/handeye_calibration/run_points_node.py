@@ -15,7 +15,7 @@ move_to_next_point call isn't active).
 
 Usage:
     ros2 run handeye_calibration run_points_node --ros-args \
-        -p recorded_points_path:=/home/cyb/projects/handeye_ws/src/record_positions/data/manifest.yaml
+        -p recorded_points_path:=/home/cyb/projects/cyberwave_handeye_test_ws/src/record_positions/data/manifest.yaml
 
 Then, from another terminal:
 
@@ -39,7 +39,7 @@ class RunPointsNode(Node):
     def __init__(self):
         super().__init__('run_points_node')
 
-        self.declare_parameter('recorded_points_path', '/home/cyb/projects/ros_ws/src/record_positions/data/manifest.yaml')
+        self.declare_parameter('recorded_points_path', '/home/cyb/projects/cyberwave_handeye_test_ws/src/record_positions/data/manifest.yaml')
         self.declare_parameter('commands_topic', '/so101_follower/joint_commands')
         self.declare_parameter('joint_state_topic', '/so101_follower/joint_states')
         

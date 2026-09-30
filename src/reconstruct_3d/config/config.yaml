@@ -20,6 +20,6 @@ scene_capture_node:
 
 run_points_node:
   ros__parameters:
-    recorded_points_path: /home/cyb/projects/handeye_ws/src/record_positions/data/manifest.yaml
+    recorded_points_path: /home/cyb/projects/cyberwave_handeye_test_ws/src/record_positions/data/manifest.yaml
     commands_topic: /right_joint_trajectory_controller/joint_trajectory
     joint_state_topic: /joint_states

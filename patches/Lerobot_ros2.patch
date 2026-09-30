@@ -343,7 +343,7 @@ index 4573611..63c16b3 100644
  ) 
 \ No newline at end of file
 diff --git a/src/so101_hw_interface/so101_hw_interface/calibrate_arm.py b/src/so101_hw_interface/so101_hw_interface/calibrate_arm.py
-index 7d8a622..8a5b7fd 100644
+index 7d8a622..44e088a 100644
 --- a/src/so101_hw_interface/so101_hw_interface/calibrate_arm.py
 +++ b/src/so101_hw_interface/so101_hw_interface/calibrate_arm.py
 @@ -1,4 +1,3 @@
@@ -356,7 +356,7 @@ index 7d8a622..8a5b7fd 100644
  }
  
 -DEFAULT_PATH = pathlib.Path.home() / ".so101_follower_calibration.yaml"
-+DEFAULT_PATH = pathlib.Path("/home/cyb/projects/ros_ws/src/Lerobot_ros2/src/so101_hw_interface/config/so101_calibration.yaml")
++DEFAULT_PATH = pathlib.Path("/home/cyb/projects/cyberwave_handeye_test_ws/src/Lerobot_ros2/src/so101_hw_interface/config/so101_calibration.yaml")
  
  class Calibrator(Node):
      def __init__(self):

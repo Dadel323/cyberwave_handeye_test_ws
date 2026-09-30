@@ -1,6 +1,6 @@
 snapshot_node:
   ros__parameters:
-    manifest_path: /home/cyb/projects/handeye_ws/src/record_positions/data/manifest.yaml
+    manifest_path: /home/cyb/projects/cyberwave_handeye_test_ws/src/record_positions/data/manifest.yaml
     joint_states_topic: /joint_states
     overwrite: true
     joints_to_keep:

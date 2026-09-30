@@ -1,21 +1,39 @@
 # cyberwave_handeye_test_ws
 
-ROS 2 Jazzy workspace for eye-in-hand calibration (ChArUco + AX=XB), dome
-sampling with MoveIt, and 3D reconstruction on the SO-101 / OpenArm.
+ROS 2 Jazzy workspace for eye-in-hand calibration of a wrist webcam
+(ChArUco + AX=XB) on the SO-101 / OpenArm, plus dome sampling with MoveIt and
+3D scene capture.
 
 ## Packages
 
 | Package | Purpose |
 | --- | --- |
-| `handeye_calibration` | Python nodes: intrinsics, capture, calibration, auto-calibration, replay |
-| `handeye_calibration_cpp` | C++ port, drop-in compatible (see its README; needs OpenCV >= 4.7) |
-| `handeye_calibration_interfaces` | Shared services |
-| `dome_sampler_pkg`, `dome_moveit_pkg` | Generate and execute dome-shaped camera poses |
-| `record_positions` | Record / snapshot joint positions into a manifest |
-| `reconstruct_3d` | Scene capture and reconstruction |
+| `handeye_calibration` | Intrinsics, sample capture, hand-eye solve, replay and analysis scripts |
+| `handeye_calibration_interfaces` | Services shared by the nodes |
+| `record_positions` | Teach joint positions into a manifest for replay |
+| `dome_sampler_pkg`, `dome_moveit_pkg` | Generate and execute dome-shaped camera poses with MoveIt |
+| `reconstruct_3d` | Capture images + poses for 3D reconstruction |
 | `so100_follower_description` | SO-100 URDF and meshes |
 
-`camera_tuner.py` and `teach_waypoints_to_manifest.py` are standalone helpers.
+Helpers at the root: `camera_tuner.py` (live V4L2 tuning with the board
+overlay) and `teach_waypoints_to_manifest.py` (so101_teach waypoints to a
+`record_positions` manifest).
+
+## Usage
+
+All launch files document their arguments in their header; the usual order is:
+
+```bash
+ros2 launch handeye_calibration viewer.launch.py         # check framing/focus
+ros2 launch handeye_calibration intrinsics.launch.py     # once per camera
+ros2 launch handeye_calibration so101_handeye.launch.py  # hand-eye, SO-101 placed by hand
+ros2 launch handeye_calibration pipeline.launch.py       # hand-eye, replaying a manifest
+ros2 launch handeye_calibration publish_handeye_tf.launch.py
+```
+
+Config files use absolute paths under
+`/home/cyb/projects/cyberwave_handeye_test_ws`; adjust them if the workspace
+lives elsewhere.
 
 ## Setup
 
@@ -35,19 +53,17 @@ source /opt/ros/jazzy/setup.bash
 rosdep install --from-paths src --ignore-src -y -r \
   --skip-keys "ament_python warehouse_ros_mongo openarm_can"
 
-# 3. Python venv for pip-only packages
+# 3. Python venv for pip-only packages (COLCON_IGNORE keeps colcon out of it)
 python3 -m venv --system-site-packages ros_venv
 ros_venv/bin/pip install -r requirements.txt
+touch ros_venv/COLCON_IGNORE
 
-# 4. Build. Running colcon with the venv interpreter makes it the shebang of
-#    every installed node, so no activation is needed at runtime.
-ros_venv/bin/python -m colcon build --symlink-install \
-  --packages-skip handeye_calibration_cpp
+# 4. Build inside the venv, so CMake and every installed node's shebang use
+#    its interpreter (no activation needed at runtime)
+source ros_venv/bin/activate
+python -m colcon build --symlink-install
 source install/setup.bash
 ```
-
-`handeye_calibration_cpp` needs OpenCV >= 4.7 (Ubuntu ships 4.6); see its
-README to build it against a separate OpenCV.
 
 The venv and `build/`/`install/` hardcode absolute paths. After moving or
 renaming the workspace, delete `ros_venv/`, `build/` and `install/` and

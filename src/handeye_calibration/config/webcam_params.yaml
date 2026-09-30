@@ -33,7 +33,7 @@
     # Written by intrinsics_node's ~/calibrate service. Until that file exists,
     # camera_info_manager warns and publishes an all-zero CameraInfo -- which
     # capture_node now rejects rather than recording as if it were valid.
-    camera_info_url: "file:///home/cyb/projects/handeye_ws/src/handeye_calibration/config/webcam_intrinsics.yaml"
+    camera_info_url: "file:///home/cyb/projects/cyberwave_handeye_test_ws/src/handeye_calibration/config/webcam_intrinsics.yaml"
 
     # usb_cam skips any of its integer control parameters left at -1, and
     # contrast/saturation/sharpness/gain already default to -1. brightness does

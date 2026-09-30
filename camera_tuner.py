@@ -16,8 +16,8 @@ Run it with the workspace sourced, and with NOTHING else holding the camera
 (usb_cam refuses to share, and V4L2 control writes get EACCES while it
 streams):
 
-    cd /home/cyb/projects && source setup.bash
-    python3 handeye_ws/camera_tuner.py            # --device /dev/video0
+    source install/setup.bash
+    ros_venv/bin/python camera_tuner.py           # --device /dev/video0
 """
 
 import argparse

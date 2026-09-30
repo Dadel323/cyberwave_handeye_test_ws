@@ -2,7 +2,7 @@ auto_calibration_node:
   ros__parameters:
 
     num_samples: 500
-    output_dir: /home/cyb/projects/handeye_ws/src/handeye_calibration/data
+    output_dir: /home/cyb/projects/cyberwave_handeye_test_ws/src/handeye_calibration/data
     calibration_method: DANIILIDIS
 
     # move_to_next_point now lives in motor_bridge itself, which owns the
@@ -23,7 +23,7 @@ calibration_node:
 
 run_points_node:
   ros__parameters:
-    recorded_points_path: /home/cyb/projects/handeye_ws/src/record_positions/data/manifest.yaml
+    recorded_points_path: /home/cyb/projects/cyberwave_handeye_test_ws/src/record_positions/data/manifest.yaml
     commands_topic: /right_joint_trajectory_controller/joint_trajectory
     joint_state_topic: /joint_states
 
@@ -52,7 +52,7 @@ intrinsics_node:
     camera_name: webcam
 
     # Read back by usb_cam through camera_info_url in webcam_params.yaml.
-    output_path: /home/cyb/projects/handeye_ws/src/handeye_calibration/config/webcam_intrinsics.yaml
+    output_path: /home/cyb/projects/cyberwave_handeye_test_ws/src/handeye_calibration/config/webcam_intrinsics.yaml
 
     min_views: 15
 
@@ -60,7 +60,7 @@ intrinsics_node:
     # ChArUco corners), and view_NNN_reproj.png after ~/calibrate showing
     # detected corners as green rings against reprojected points as red dots.
     # Set to "" to switch off.
-    debug_dir: /home/cyb/projects/handeye_ws/src/handeye_calibration/data/intrinsics_debug
+    debug_dir: /home/cyb/projects/cyberwave_handeye_test_ws/src/handeye_calibration/data/intrinsics_debug
 
     # Must match capture_node's board block above -- the same printed board is
     # used for intrinsics and for the hand-eye poses.

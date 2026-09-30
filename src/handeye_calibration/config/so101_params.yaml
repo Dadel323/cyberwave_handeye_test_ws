@@ -4,13 +4,12 @@
 # restores it after, so the frame and the TF lookup describe the same
 # stationary pose. No recorded pose manifest is involved.
 #
+# Three terminals, all reading this file (see so101_handeye.launch.py):
 #   ros2 launch handeye_calibration so101_handeye.launch.py
-#   # second terminal, same file:
+#   ros2 run so101_hw_interface so101_motor_bridge --ros-args \
+#       --params-file <pkg>/config/so101_params.yaml
 #   ros2 run handeye_calibration auto_calibration_node --ros-args \
 #       --params-file <pkg>/config/so101_params.yaml
-#
-# Kept alongside so100_params.yaml rather than replacing it -- the two arms
-# differ in URDF link names, so they cannot share one file.
 
 so101_motor_bridge:
   ros__parameters:
@@ -34,40 +33,7 @@ auto_calibration_node:
 
     # An upper bound -- Ctrl-C to stop early.
     num_samples: 15
-    output_dir: /home/cyb/projects/handeye_ws/src/handeye_calibration/data_so101
-    calibration_method: DANIILIDIS
-
-calibration_node:
-  ros__parameters:
-    # false, so the pose step goes through point_sampler_node's
-    # ~/move_to_next_point below. manual_mode true would make this node do the
-    # prompting instead, which is not what we want -- the bridge owns it.
-    manual_mode: false
-
-    # The motor bridge, in place of run_points_node. Its
-    # ~/move_to_next_point prompts three times on the bridge's own terminal --
-    # relax, lock, return -- then this node captures. That is why motor_bridge
-    # is started standalone rather than from the launch file: a launch-started
-    # process has no stdin to prompt on.
-    point_sampler_node: /so101_motor_bridge
-
-    # Unused while manual_mode is false: it is for the alternative where this
-    # node prompts and calls the bridge's ~/relax and ~/lock itself.
-    motor_bridge_node: ''
-
-    # capture_node's own ~/sample_position (image + TF into dataset.yaml).
-    # Note motor_bridge also has a ~/sample_position; that one is the
-    # interactive reposition-by-hand helper and is not what belongs here.
-    capture_node: /capture_node
-
-    # Seconds to let the servos settle onto the locked pose before the frame
-    # and the TF lookup are taken.
-    settle_sec: 0.5
-
-    # An upper bound -- answer 'q' at the prompt to stop early and solve over
-    # what you have.
-    num_samples: 15
-    output_dir: /home/cyb/projects/handeye_ws/src/handeye_calibration/data_so101
+    output_dir: /home/cyb/projects/cyberwave_handeye_test_ws/src/handeye_calibration/data_so101
     calibration_method: DANIILIDIS
 
 calibration_node:

@@ -5,7 +5,7 @@
 
 snapshot_node:
   ros__parameters:
-    manifest_path: /home/cyb/projects/handeye_ws/src/record_positions/data/manifest_so100.yaml
+    manifest_path: /home/cyb/projects/cyberwave_handeye_test_ws/src/record_positions/data/manifest_so100.yaml
 
     # motor_bridge publishes here; there is no /joint_states on this robot.
     joint_states_topic: /so101_follower/joint_states

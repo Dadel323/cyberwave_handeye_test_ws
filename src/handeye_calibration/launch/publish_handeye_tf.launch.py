@@ -60,7 +60,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'result_file',
-            default_value='/home/cyb/projects/handeye_ws/src/handeye_calibration/'
+            default_value='/home/cyb/projects/cyberwave_handeye_test_ws/src/handeye_calibration/'
                           'data_so101/handeye_result.yaml',
             description='handeye_result.yaml to publish. Supplies the '
                         'transform and both frame names.'),

@@ -26,7 +26,7 @@ class SnapshotNode(Node):
 
         self.declare_parameter(
             'manifest_path',
-            '/home/cyb/projects/handeye_ws/src/record_positions/data/manifest.yaml',
+            '/home/cyb/projects/cyberwave_handeye_test_ws/src/record_positions/data/manifest.yaml',
         )
         self.declare_parameter('joint_states_topic', '/joint_states')
         self.declare_parameter('overwrite', True)
